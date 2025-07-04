@@ -70,3 +70,16 @@ def experience():
     from datetime import datetime
     current_year = datetime.now().year
     return render_template('experience.html', experiences=experiences, current_year=current_year)
+
+@app.route('/projects')
+def projects():
+    projects = [
+        {
+            'title': 'MLH Portfolio',
+            'description': 'A personal portfolio site built for the MLH Fellowship using Flask, featuring dynamic pages for hobbies, education, experience, and more.',
+            'image': ''
+        }
+    ]
+    from datetime import datetime
+    current_year = datetime.now().year
+    return render_template('projects.html', projects=projects, current_year=current_year)
