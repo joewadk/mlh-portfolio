@@ -29,3 +29,15 @@ def hobbies():
     from datetime import datetime
     current_year = datetime.now().year
     return render_template('hobbies.html', hobbies=hobbies, current_year=current_year)
+
+@app.route('/about')
+def about():
+    from datetime import datetime
+    current_year = datetime.now().year
+    return render_template('about.html', current_year=current_year)
+
+@app.route('/education')
+def education():
+    from datetime import datetime
+    current_year = datetime.now().year
+    return render_template('education.html', current_year=current_year)
