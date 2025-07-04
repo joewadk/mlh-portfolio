@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta property="og:title" content="My Hobbies">
+    <meta property="og:description" content="A list of my hobbies">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/main.css') }}">
+    <link rel='icon' href='{{ url_for('static', filename='img/favicon.ico') }}' type='image/x-icon' />
+    <title>My Hobbies</title>
+    <style>
+        .hobbies-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            align-items: center;
+        }
+        .hobby-card {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            background: #fff;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 700px;
+            width: 100%;
+            min-height: 180px;
+        }
+        .hobby-image {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            border-radius: 12px;
+            margin-right: 32px;
+            background: #f5f5f9;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .hobby-content {
+            flex: 1;
+        }
+        .hobby-title {
+            font-size: 2rem;
+            color: #1d539f;
+            margin-bottom: 0.5rem;
+        }
+        .hobby-descriptions {
+            text-align: left;
+            margin: 0;
+            padding-left: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="site-wrapper">
+        <header class="nav-bar">
+            <div class="nav-content">
+                <a href="/">
+                    <div class="nav-logo">
+                        <img src="{{ url_for('static', filename='img/logo.svg') }}" />
+                    </div>
+                </a>
+                <nav class="nav-links">
+                    <a href="/">Home</a>
+                    <a href="/about">About</a>
+                    <a href="/projects">Projects</a>
+                    <a href="/hobbies">Hobbies</a>
+                    <a href="/map">Contact</a>
+                </nav>
+            </div>
+        </header>
+        <main class="profile">
+            <h1 class="page-title">My Hobbies</h1>
+            <div class="hobbies-list">
+                {% for hobby, data in hobbies.items() %}
+                    <section class="hobby-card">
+                        <img class="hobby-image" src="{{ data.image }}" alt="{{ hobby }} image">
+                        <div class="hobby-content">
+                            <h2 class="hobby-title">{{ hobby }}</h2>
+                            <ul class="hobby-descriptions">
+                                {% for desc in data.descriptions %}
+                                    <li>{{ desc }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </section>
+                {% endfor %}
+            </div>
+        </main>
+        <footer class="footer">
+            <div class="footer-links">
+                <a href="https://www.linkedin.com/in/jawadkabir9675" target="_blank" rel="noopener noreferrer">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" alt="LinkedIn" width="28" height="28" />
+                </a>
+                <a href="https://devpost.com/joewadk/challenges" target="_blank" rel="noopener noreferrer">
+                    <img src="https://www.svgrepo.com/show/330293/devpost.svg" alt="Devpost" width="28" height="28" />
+                </a>
+                <a href="https://github.com/joewadk" target="_blank" rel="noopener noreferrer">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" width="28" height="28" />
+                </a>
+            </div>
+            <p>&copy; {{ current_year }} Jawad Kabir. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>
