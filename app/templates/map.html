@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta property="og:title" content="Map - Jawad Kabir">
+    <meta property="og:description" content="Map of places visited by Jawad Kabir">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/main.css') }}">
+    <link rel='icon' href='{{ url_for('static', filename='img/favicon.ico') }}' type='image/x-icon' />
+    <title>Map - Jawad Kabir</title>
+    <style>
+        .map-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 2rem;
+        }
+        .map-title {
+            font-size: 2rem;
+            color: #1d539f;
+            margin-bottom: 1rem;
+        }
+    </style>
+    <script src="https://cdn.maptiler.com/maptiler-sdk-js/v3.5.0/maptiler-sdk.umd.min.js"></script>
+    <link href="https://cdn.maptiler.com/maptiler-sdk-js/v3.5.0/maptiler-sdk.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="site-wrapper">
+        <header class="nav-bar">
+            <div class="nav-content">
+                <a href="/">
+                    <div class="nav-logo">
+                        <img src="{{ url_for('static', filename='img/logo.svg') }}" />
+                    </div>
+                </a>
+                <nav class="nav-links">
+                    <a href="/">Home</a>
+                    <a href="/about">About</a>
+                    <a href="/education">Education</a>
+                    <a href="/experience">Experience</a>
+                    <a href="/projects">Projects</a>
+                    <a href="/hobbies">Hobbies</a>
+                    <a href="/map">Map</a>
+                </nav>
+            </div>
+        </header>
+        <main class="profile">
+            <div class="map-container" style="width:100vw;max-width:100vw;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                <h1 class="map-title">Places I've Visited</h1>
+                <div id="map" style="width:90vw;max-width:800px;height:60vh;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.08);border:2px solid #1d539f;background:#fff;"></div>
+
+            </div>
+        </main>
+        <footer class="footer">
+            <div class="footer-links">
+                <a href="https://www.linkedin.com/in/jawadkabir9675" target="_blank" rel="noopener noreferrer">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" alt="LinkedIn" width="28" height="28" />
+                </a>
+                <a href="https://devpost.com/joewadk/challenges" target="_blank" rel="noopener noreferrer">
+                    <img src="https://www.svgrepo.com/show/330293/devpost.svg" alt="Devpost" width="28" height="28" />
+                </a>
+                <a href="https://github.com/joewadk" target="_blank" rel="noopener noreferrer">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" width="28" height="28" />
+                </a>
+            </div>
+
+        </footer>
+    </div>
+    <script>
+      maptilersdk.config.apiKey = '{{ GLOBE_API_KEY }}';
+      var places = {
+        'type': 'FeatureCollection',
+        'features': [
+          {
+            'type': 'Feature',
+            'properties': {
+              'description': 'New York',
+              'icon': 'marker'
+            },
+            'geometry': {
+              'type': 'Point',
+              'coordinates': [-74.0060, 40.7128]
+            }
+          },
+          {
+            'type': 'Feature',
+            'properties': {
+              'description': 'Massachusetts',
+              'icon': 'marker'
+            },
+            'geometry': {
+              'type': 'Point',
+              'coordinates': [-71.3824, 42.4072]
+            }
+          },
+          {
+            'type': 'Feature',
+            'properties': {
+              'description': 'Connecticut',
+              'icon': 'marker'
+            },
+            'geometry': {
+              'type': 'Point',
+              'coordinates': [-73.0877, 41.6032]
+            }
+          },
+          {
+            'type': 'Feature',
+            'properties': {
+              'description': 'New Jersey',
+              'icon': 'marker'
+            },
+            'geometry': {
+              'type': 'Point',
+              'coordinates': [-74.4057, 40.0583]
+            }
+          },
+          {
+            'type': 'Feature',
+            'properties': {
+              'description': 'Bangladesh',
+              'icon': 'marker'
+            },
+            'geometry': {
+              'type': 'Point',
+              'coordinates': [90.3563, 23.6850]
+            }
+          }
+        ]
+      };
+      var map = new maptilersdk.Map({
+        container: 'map',
+        style: maptilersdk.MapStyle.STREETS,
+        center: [-74.0060, 40.7128],
+        zoom: 5.5
+      });
+      map.on('load', function () {
+        map.addSource('places', {
+          'type': 'geojson',
+          'data': places
+        });
+        map.addLayer({
+          'id': 'poi-labels',
+          'type': 'symbol',
+          'source': 'places',
+          'layout': {
+            'text-field': ['get', 'description'],
+            'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
+            'text-radial-offset': 0.5,
+            'text-justify': 'auto',
+            'icon-image': ['get', 'icon']
+          }
+        });
+      });
+    </script>
+</body>
+</html>

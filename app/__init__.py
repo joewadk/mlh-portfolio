@@ -69,7 +69,7 @@ def experience():
     ]
     from datetime import datetime
     current_year = datetime.now().year
-    return render_template('experience.html', experiences=experiences, current_year=current_year)
+    return render_template('experience.html', experiences=experiences)
 
 @app.route('/projects')
 def projects():
@@ -82,4 +82,12 @@ def projects():
     ]
     from datetime import datetime
     current_year = datetime.now().year
-    return render_template('projects.html', projects=projects, current_year=current_year)
+    return render_template('projects.html', projects=projects)
+
+@app.route('/map')
+def map_page():
+    import os
+    from datetime import datetime
+    current_year = datetime.now().year
+    globe_api_key = os.environ.get('GLOBE_API_KEY', '')
+    return render_template('map.html', current_year=current_year, GLOBE_API_KEY=globe_api_key)  # be suyre to include the maptiler api key in your .env file
