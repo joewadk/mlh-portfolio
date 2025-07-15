@@ -76,7 +76,7 @@ def projects():
     projects = [
         {
             'title': 'MLH Portfolio',
-            'description': 'A personal portfolio site built for the MLH Fellowship using Flask, featuring dynamic pages for hobbies, education, experience, and more.',
+            'description': 'A personal portfolio site built for the MLH Fellowship using Flask, featuring dynamic pages for hobbies, education, experience, and more. I have also set up a redeploy script to automatically fetch and add changes from github',
             'image': ''
         }
     ]
