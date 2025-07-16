@@ -1,9 +1,33 @@
 import os
-from flask import Flask, render_template, request, url_for
+import datetime
+from peewee import *
 from dotenv import load_dotenv
+from flask import Flask, render_template, request, url_for
+from playhouse.shortcuts import model_to_dict
 
 load_dotenv()
 app = Flask(__name__)
+mydb=MySQLDatabase(os.getenv("MYSQL_DATABASE"),
+                   user=os.getenv("MYSQL_USER"),
+                   password=os.getenv("MYSQL_PASSWORD"),
+                   host=os.getenv("MYSQL_HOST"),
+                   port=int(os.getenv("MYSQL_PORT", 3306))
+)
+print(mydb)
+
+#class def for db
+class TimelinePost(Model):
+    name=CharField()
+    email=CharField()
+    content=TextField()
+    created_at=DateTimeField(default=datetime.datetime.now)
+
+
+    class Meta:
+        database = mydb
+
+mydb.connect()
+mydb.create_tables([TimelinePost])
 
 
 @app.route('/')
@@ -91,3 +115,33 @@ def map_page():
     current_year = datetime.now().year
     globe_api_key = os.environ.get('GLOBE_API_KEY', '')
     return render_template('map.html', current_year=current_year, GLOBE_API_KEY=globe_api_key)  # be suyre to include the maptiler api key in your .env file
+
+
+#timeline posts
+@app.route('/api/timeline', methods=[ 'POST'])
+def post_timeline():
+    name = request.form.get('name')
+    email = request.form.get('email')
+    content = request.form.get('content')
+    
+    #input validation, throws 400 if any field is empty
+    if not name or not email or not content:
+        return {'error': 'All fields are required'}, 400
+
+    post = TimelinePost.create(name=name, email=email, content=content)
+    return model_to_dict(post)
+
+@app.route('/api/timeline', methods=['GET'])
+def get_timeline():
+    return {'posts': [model_to_dict(post) for post in TimelinePost.select().order_by(TimelinePost.created_at.desc())]}
+
+
+@app.route('/api/timeline', methods=['DELETE'])
+def delete_last_timeline():
+    last_post = TimelinePost.select().order_by(TimelinePost.created_at.desc()).first()
+
+    if last_post: #throwing errors for success and failure to delete
+        last_post.delete_instance()
+        return {'message': 'last post deleted', 'deleted': model_to_dict(last_post)}, 200
+    else:
+        return {'error': 'No posts to delete'}, 404
