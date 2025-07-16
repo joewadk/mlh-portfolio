@@ -1,0 +1,184 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta property="og:title" content="Timeline - Jawad Kabir">
+    <meta property="og:description" content="Timeline of posts by visitors">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles/main.css">
+    <link rel='icon' href='./static/img/favicon.ico' type='image/x-icon' />
+    <title>Timeline</title>
+    <style>
+        .timeline-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            padding: 2rem;
+        }
+        .timeline-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .timeline-form input, .timeline-form textarea {
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+        }
+        .timeline-form button {
+            background: #1d539f;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .timeline-form button:hover {
+            background: #163d6b;
+        }
+        .timeline-post {
+            border-bottom: 1px solid #eee;
+            padding: 1rem 0;
+        }
+        .timeline-post:last-child {
+            border-bottom: none;
+        }
+        .timeline-post .post-meta {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 0.5rem;
+        }
+        .timeline-post .post-content {
+            font-size: 1.1rem;
+        }
+        .timeline-title {
+            text-align: center;
+            color: #1d539f;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="site-wrapper">
+        <header class="nav-bar">
+            <div class="nav-content">
+                <a href="/">
+                    <div class="nav-logo">
+                        <img src="./static/img/logo.svg" />
+                    </div>
+                </a>
+                <nav class="nav-links">
+                    <a href="/">Home</a>
+                    <a href="/education">Education</a>
+                    <a href="/experience">Experience</a>
+                    <a href="/projects">Projects</a>
+                    <a href="/hobbies">Hobbies</a>
+                    <a href="/map">Map</a>
+                    <a href="/timeline">Timeline</a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="profile">
+            <div class="timeline-container">
+                <h1 class="timeline-title">Timeline</h1>
+                <form class="timeline-form" id="timelineForm">
+                    <input type="text" id="name" name="name" placeholder="Your Name" required />
+                    <input type="email" id="email" name="email" placeholder="Your Email" required />
+                    <textarea id="content" name="content" placeholder="What's on your mind?" rows="4" required></textarea>
+                    <button type="submit">Post</button>
+                    <div id="formError" style="color:red;display:none;"></div>
+                </form>
+                <div id="timelinePosts">
+
+                </div>
+            </div>
+        </main>
+        <footer class="footer">
+            <div class="footer-links">
+                <a href="https://www.linkedin.com/in/jawadkabir9675" target="_blank" rel="noopener noreferrer">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" alt="LinkedIn" width="28" height="28" />
+                </a>
+                <a href="https://devpost.com/joewadk/challenges" target="_blank" rel="noopener noreferrer">
+                    <img src="https://www.svgrepo.com/show/330293/devpost.svg" alt="Devpost" width="28" height="28" />
+                </a>
+                <a href="https://github.com/joewadk" target="_blank" rel="noopener noreferrer">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" width="28" height="28" />
+                </a>
+            </div>
+        </footer>
+    </div>
+    <script>
+        function loadTimelinePosts() {
+            fetch('/api/timeline')
+                .then(res => res.json())
+                .then(data => {
+                    const posts = data.posts || [];
+                    const container = document.getElementById('timelinePosts');
+                    if (posts.length === 0) {
+                        container.innerHTML = '<p style="text-align:center;color:#888;">No posts yet. Be the first to post!</p>';
+                        return;
+                    }
+                    container.innerHTML = posts.map(post => {
+                        let dtStr = post.created_at;
+                        if (!/Z$|[+-]\d{2}:?\d{2}$/.test(dtStr)) {
+                            dtStr += 'Z';
+                        }
+                        const estDate = new Date(dtStr).toLocaleString('en-US', { timeZone: 'America/New_York' });
+                        return `
+                        <div class="timeline-post">
+                            <div class="post-meta">
+                                <strong>${post.name}</strong> &bull; ${post.email} <br>
+                                <span>${estDate} (EST)</span>
+                            </div>
+                            <div class="post-content">${post.content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+                        </div>
+                    `;
+                    }).join('');
+                });
+        }
+
+        document.getElementById('timelineForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            const errorDiv = document.getElementById('formError');
+            errorDiv.style.display = 'none';
+            fetch('/api/timeline', {
+                method: 'POST',
+                body: formData
+            })
+            .then(async res => {
+                if (!res.ok) {
+                    const data = await res.json();
+                    throw new Error(data.error || 'Failed to post');
+                }
+                return res.json();
+            })
+            .then(post => {
+                form.reset();
+                loadTimelinePosts();
+            })
+            .catch(err => {
+                errorDiv.textContent = err.message;
+                errorDiv.style.display = 'block';
+            });
+        });
+
+        // Initial load
+        loadTimelinePosts();
+    </script>
+</body>
+
+</html>
