@@ -116,7 +116,7 @@ def map_page():
     globe_api_key = os.environ.get('GLOBE_API_KEY', '')
     return render_template('map.html', current_year=current_year, GLOBE_API_KEY=globe_api_key)  # be suyre to include the maptiler api key in your .env file
 
-app.route('/timeline')
+@app.route('/timeline')
 def timeline():
     return render_template('timeline.html')
 

@@ -131,16 +131,12 @@
                         return;
                     }
                     container.innerHTML = posts.map(post => {
-                        let dtStr = post.created_at;
-                        if (!/Z$|[+-]\d{2}:?\d{2}$/.test(dtStr)) {
-                            dtStr += 'Z';
-                        }
-                        const estDate = new Date(dtStr).toLocaleString('en-US', { timeZone: 'America/New_York' });
+                        const estDate = new Date(post.created_at).toLocaleString();
                         return `
                         <div class="timeline-post">
                             <div class="post-meta">
                                 <strong>${post.name}</strong> &bull; ${post.email} <br>
-                                <span>${estDate} (EST)</span>
+                                <span>${estDate}</span>
                             </div>
                             <div class="post-content">${post.content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
                         </div>
