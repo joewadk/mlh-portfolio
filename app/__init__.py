@@ -7,12 +7,19 @@ from playhouse.shortcuts import model_to_dict
 
 load_dotenv()
 app = Flask(__name__)
-mydb=MySQLDatabase(os.getenv("MYSQL_DATABASE"),
-                   user=os.getenv("MYSQL_USER"),
-                   password=os.getenv("MYSQL_PASSWORD"),
-                   host=os.getenv("MYSQL_HOST"),
-                   port=int(os.getenv("MYSQL_PORT", 3306))
-)
+
+#flip between sqlite and mysql
+if os.getenv("TESTING") == "true":
+    print("Running in test mode")
+    mydb = SqliteDatabase('file:memory?mode=memory&cache=shared', uri=True)
+else:
+    mydb = MySQLDatabase(
+        os.getenv("MYSQL_DATABASE"),
+        user=os.getenv("MYSQL_USER"),
+        password=os.getenv("MYSQL_PASSWORD"),
+        host=os.getenv("MYSQL_HOST"),
+        port=3306
+    )
 print(mydb)
 
 #class def for db
@@ -127,9 +134,13 @@ def post_timeline():
     email = request.form.get('email')
     content = request.form.get('content')
     
-    #input validation, throws 400 if any field is empty
-    if not name or not email or not content:
-        return {'error': 'All fields are required'}, 400
+    #input validation, updated to ensure errors match tests
+    if not name or len(name) < 3: # ensure name is at least 3 characters
+        return "Invalid name", 400
+    if not content or len(content) < 5: # ensure content is at least 5 characters
+        return "Invalid content", 400
+    if not email or '@' not in email:
+        return "Invalid email", 400 # ensure email contains '@'
 
     post = TimelinePost.create(name=name, email=email, content=content)
     return model_to_dict(post)
