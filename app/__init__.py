@@ -4,15 +4,20 @@ from peewee import *
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, url_for
 from playhouse.shortcuts import model_to_dict
+import re
 
 load_dotenv()
 app = Flask(__name__)
-mydb=MySQLDatabase(os.getenv("MYSQL_DATABASE"),
-                   user=os.getenv("MYSQL_USER"),
-                   password=os.getenv("MYSQL_PASSWORD"),
-                   host=os.getenv("MYSQL_HOST"),
-                   port=int(os.getenv("MYSQL_PORT", 3306))
-)
+if os.getenv("TESTING") == "true":
+    print("Running in test mode")
+    mydb = SqliteDatabase('file:memory?mode=memory&cache=shared', uri=True)
+else:
+    mydb=MySQLDatabase(os.getenv("MYSQL_DATABASE"),
+                       user=os.getenv("MYSQL_USER"),
+                       password=os.getenv("MYSQL_PASSWORD"),
+                       host=os.getenv("MYSQL_HOST"),
+                       port=int(os.getenv("MYSQL_PORT", 3306))
+    )
 print(mydb)
 
 #class def for db
@@ -126,10 +131,18 @@ def post_timeline():
     name = request.form.get('name')
     email = request.form.get('email')
     content = request.form.get('content')
-    
-    #input validation, throws 400 if any field is empty
-    if not name or not email or not content:
-        return {'error': 'All fields are required'}, 400
+
+    # Input validation
+    if not name or name.strip() == '':
+        return {'error': 'Invalid name'}, 400
+    if not email or email.strip() == '':
+        return {'error': 'Invalid email'}, 400
+    # Email regex
+    email_regex = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"
+    if not re.match(email_regex, email):
+        return {'error': 'Invalid email'}, 400
+    if not content or content.strip() == '':
+        return {'error': 'Invalid content'}, 400
 
     post = TimelinePost.create(name=name, email=email, content=content)
     return model_to_dict(post)
