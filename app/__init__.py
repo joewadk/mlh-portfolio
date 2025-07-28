@@ -43,7 +43,7 @@ def index():
 def hobbies():
     hobbies = {
         'Video Games': {
-            'descriptions': ['I love playing video games, especially RPGs and strategy games. Some of my favorite games are Doom Eternal and Hollow Knight.'],
+            'descriptions': ['I love playing video games, especially RPGs and strategy games. Some of my favorite games are Cyberpunk 2077  and Hollow Knight.'],
             'image': 'https://jawad-stuff.s3.us-east-1.amazonaws.com/hk.jpg'
         },
         'Model Kits': {
