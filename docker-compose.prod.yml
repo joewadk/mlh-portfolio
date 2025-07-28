@@ -38,7 +38,3 @@ volumes:
   mydatabase:
   nginx_secrets:
 
-
-volumes:
-  mydatabase:
-
