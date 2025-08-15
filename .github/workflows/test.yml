@@ -14,18 +14,27 @@ jobs:
       TESTING: true
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.6.8'  # Change to your desired Python version
+          python-version: '3.11'
 
       - name: Setup Python Virtual Environment
         run: python -m venv python3-virtualenv
+      - name: Upgrade pip
+        run: python3-virtualenv/bin/python -m pip install --upgrade pip
+
+      - name: Activate Virtual Environment
+        run: source python3-virtualenv/bin/activate
+      
 
       - name: Install Dependencies
         run: python3-virtualenv/bin/pip install -r requirements.txt
 
+      - name: Make test script executable
+        run: chmod +x run-tests.sh
+
       - name: Run Tests
-        run: ./run_test.sh
+        run: ./run-tests.sh
