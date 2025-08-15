@@ -37,3 +37,9 @@ jobs:
 
       - name: Run tests on VPS
         run: ssh my-vps "cd ${{ secrets.PROJECT_ROOT }} && ./run-tests.sh"
+      - name: Notify Discord - Deployment Success
+        if: success()
+        run: curl -s -X POST "${{ secrets.DISCORD_WEBHOOK }}" -d "content=🚀 Deployment Successful"
+      - name: Notify Discord - Deployment Failed
+        if: failure()
+        run: curl -s -X POST "${{ secrets.DISCORD_WEBHOOK }}" -d "content=😓 Deployment Failed"
