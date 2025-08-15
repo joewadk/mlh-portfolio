@@ -33,7 +33,7 @@ jobs:
           SSH_IP: ${{ secrets.SSH_IP }}
 
       - name: Deploy Site
-        run: ssh my-vps ''cd ${{ secrets.PROJECT_ROOT }} && ./redeploy.sh'
+        run: ssh my-vps "cd ${{ secrets.PROJECT_ROOT }} && ./redeploy.sh"
 
       - name: Run tests on VPS
         run: ssh my-vps "cd ${{ secrets.PROJECT_ROOT }} && ./run-tests.sh"
